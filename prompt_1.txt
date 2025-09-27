@@ -1,0 +1,39 @@
+I will provide you with a NUMBERED SEQUENCE OF TEXT PASSAGES (e.g., news articles, reports, summaries). For each passage, do the following:
+- Identify only **monetary values** that appear **in the context of cybersecurity**.
+  - This includes any value related to cybersecurity operations, services, events, companies, products, threats, or risks.
+  - Examples include: costs of protection, investments in security, ransoms, losses from breaches, cybersecurity budgets, insurance coverage, product pricing, fines, settlements, or any other monetary amount mentioned in a cybersecurity context.
+- **Do NOT include** percentages, dates, counts, statistics or monetary figures unrelated to cybersecurity.
+- For each monetary value, extract the **exact string** (e.g. "$200", "$3.5 million", "€7B") and write a **brief description** explaining what it refers to in context (e.g., "customer compensation", "cyberattack damages", "annual profit").
+
+Return the result as a list of dictionaries for each input text. Each dictionary should have two keys:
+- "value_found": a list of all values extracted
+- "description_of_value": a list of the corresponding descriptions
+
+You will be given exactly {input_lenght} passages. Return a list of exactly {input_lenght} dictionaries, one for each passage, in the same order.
+Format the output as a list of results of lenght the same as the input. Each result should correspond to one text in the same order.
+
+-- start NUMBERED SEQUENCE OF TEXT PASSAGES --
+{numbered_sequence_of_text_passages}
+-- end NUMBERED SEQUENCE OF TEXT PASSAGES --
+
+-- start EXAMPLE --
+INPUT:
+list_of_text_passages = ["The company reported a revenue increase of 12% in Q4, with total profits hitting $3.2 million.",
+                         "The breach cost the organization an estimated $500,000 in damages.",
+                         "No economic figures were disclosed in the press release."]
+OUTPUT:
+[{"value_found": ["12 milions", "$3.2 million"],
+  "description_of_value": ["Revenue increase in Q4", "Total profits"]},
+ {"value_found": ["$500,000"],
+  "description_of_value": ["Estimated damage cost from breach"]},
+ {"value_found": [],
+  "description_of_value": []}]
+-- end EXAMPLE --
+
+Return only a valid Python list of dictionaries.  
+Each dictionary must have exactly these two keys:  
+- "value_found"  
+- "description_of_value"  
+
+Do not include any code, functions, or explanations.  
+Just output the list of dictionaries. 

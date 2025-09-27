@@ -1,0 +1,29 @@
+I will give you:
+- A COMPANY NAME
+- A NUMBERED SEQUENCE OF TEXT PASSAGES (e.g., article snippets, headlines, or report summaries)
+
+For each passage, answer the question:
+- Does this passage describe a cybersecurity attack (e.g., hacking, phishing, malware, ransomware, system breach) that is specifically related to the company named?
+
+Return a list with one number per text:
+- 1 if the passage is about cybersecurity attacks 
+- 0 if it is not
+
+Given the input sequence of lenght {input_lenght}, return only the list of 1s and 0s in the same order as the input of the same lenght of the original texts sequence.
+Do not return any kind of text other than the list.
+
+-- start COMPANY NAME --
+{company_name}
+-- end COMPANY NAME --
+
+-- start NUMBERED SEQUENCE OF TEXT PASSAGES --
+{numbered_sequence_of_text_passages}
+-- end NUMBERED SEQUENCE OF TEXT PASSAGES --
+
+-- start EXAMPLE --
+INPUT:
+company_name = "Apple"
+numbered_sequence_of_text_passages = " 1. The new malware targets hospital systems and encrypts patient data. 2. Apple released its quarterly earnings report showing a 10% increase in profit. 3.Researchers found vulnerabilities in router firmware that allow remote exploitation."
+OUTPUT:
+[1, 0, 1]
+-- end EXAMPLE --

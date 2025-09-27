@@ -1,0 +1,72 @@
+You are a cybersecurity analyst specializing in economic impact analysis.
+
+I will provide you with multiple records. Each record contains:
+- A COMPANY NAME
+- A NUMBERED SEQUENCE OF TEXT PASSAGES related to a cyberattack
+- A NUMBERED SEQUENCE OF ECONOMIC VALUES mentioned in that text
+- A corresponding NUMBERED SEQUENCE OF DESCRIPTIONS OF WHAT THE VALUES REFER TO in the context of the attack
+
+Use all available information across all records to complete the following task:
+
+Analyze the input to identify and consolidate the following 13 dimensions of impact from the information provided. If no information is available for a dimension, return null:
+QUANTITATIVE (Return a number or range in USD where possible):
+- Information_Privacy – Costs due to breaches of personal/sensitive data (e.g. customer data leaks, identity theft).
+- Proprietary_data_loss – Losses due to leaks of trade secrets, business files, internal data, or partner/customer data (non-personal).
+- Business_interruption – Revenue or service losses caused by downtime or process disruption.
+- Cyber_extorsion – Ransom demands or related costs (paid or potential).
+- Network_security – Forensic, legal, and remediation costs tied to network/system recovery.
+- Financial_fraud – Direct theft of money, assets, or manipulation of financial transactions.
+- Media_content – Costs from misuse or theft of logos, trademarks, or media rights.
+- Hardware_bricking – Replacement costs of unusable devices due to cyberattack (e.g., wiper malware).
+- Post_breach_security_requirements – Costs related to strengthening cybersecurity after the breach.
+- Reputational_damage – Estimated financial losses due to reputational harm (e.g., loss of customers, increased PR costs).
+QUALITATIVE (Return a short description, or null if not available):
+- Data_affected_or_stolen – What kind of data was involved in the attack?
+- Alleged_attacker_or_threat_actor – Who is believed or claimed to have carried out the attack?
+- Response_by_the_entity – How did the affected organization respond (e.g. legal action, public statements, recovery plans)?
+
+-- start COMPANY NAME --
+{company_name}
+-- end COMPANY NAME --
+
+-- start NUMBERED SEQUENCE OF TEXT PASSAGES --
+{numbered_sequence_of_text_passages}
+-- end NUMBERED SEQUENCE OF TEXT PASSAGES --
+
+-- start NUMBERED SEQUENCE OF ECONOMIC VALUES --
+{numbered_sequence_of_economic_values}
+-- end NUMBERED SEQUENCE OF ECONOMIC VALUES --
+
+-- start NUMBERED SEQUENCE OF DESCRIPTIONS OF WHAT THE VALUES REFER TO --
+{numbered_sequence_of_descriptions_of_what_the_value_refer_to}
+-- end NUMBERED SEQUENCE OF DESCRIPTIONS OF WHAT THE VALUES REFER TO --
+
+-- start EXAMPLE --
+INPUT:
+company_name = "MediSecure"
+list_of_text_passages = ["Hackers breached MediSecure’s patient portal, stealing sensitive health records and demanding a $2 million ransom.",
+                         "Following the ransomware attack, MediSecure lost nearly $800,000 due to business disruption and had to hire a cybersecurity firm for $300,000 to investigate the breach.",
+                         "Regulators required MediSecure to invest $500,000 in post-breach infrastructure updates and legal notifications."]
+list_of_economic_values = [["$2 million"],
+                           ["$800,000", "$300,000"],
+                           ["$500,000"]]
+list_of_descriptions_of_what_the_value_refer_to = [["ransom demand made by attackers"],
+                                                   ["losses due to business interruption", "costs to hire forensic cybersecurity investigators"],
+                                                   ["mandatory post-breach system updates and compliance"]]
+OUTPUT:
+```json
+{"Information_Privacy": "null",
+ "Proprietary_data_loss": "null",
+ "Business_interruption": "$800,000",
+ "Cyber_extorsion": "$2,000,000",
+ "Network_security": "$300,000",
+ "Financial_fraud": "null",
+ "Media_content": "null",
+ "Hardware_bricking": "null",
+ "Post_breach_security_requirements": "$500,000",
+ "Reputational_damage": "null",
+ "Data_affected_or_stolen": "Sensitive patient health records",
+ "Alleged_attacker_or_threat_actor": "Hackers (unspecified group)",
+ "Response_by_the_entity": "MediSecure hired a cybersecurity firm, notified regulators, and implemented infrastructure updates"}
+```
+-- end EXAMPLE --
