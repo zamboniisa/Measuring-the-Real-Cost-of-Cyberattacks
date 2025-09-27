@@ -35,7 +35,7 @@ import re
 import json
 import ast
 
-path = '/Users/bibbi/Desktop/tesi isa/tesi-isa-1-d71a66bbbd87.json'
+path = '***.json'
 
 def chunk_retry(BASE_URL, params):
     resp = requests.get(BASE_URL, params=params)
@@ -264,7 +264,7 @@ def download_csv(name, date, days_param, try_ = False):
 def generate(msg, prompt):
     # Initialise Vertex AI
     vertexai.init(
-        project="tesi-isa-1",
+        project="***",
         location="global"
     )
 
@@ -300,58 +300,6 @@ def generate(msg, prompt):
             full_response += chunk.candidates[0].content.parts[0].text
 
     return full_response
-
-
-# def generate(msg, prompt):
-#   client = genai.Client(
-#       vertexai=True,
-#       project="gen-lang-client-0273914738",
-#       location="global",
-#   )
-
-#   msg1_text1 = msg
-
-#   si_text1 = prompt
-#   model = "gemini-2.5-flash"
-#   contents = [
-#     types.Content(
-#       role="user",
-#       parts=[
-#         types.Part(text=msg1_text1)
-#       ]
-#     ),
-#   ]
-
-#   generate_content_config = types.GenerateContentConfig(
-#     temperature = 0,
-#     top_p = 1,
-#     seed = 0,
-#     max_output_tokens = 60000,
-#     safety_settings = [types.SafetySetting(
-#       category="HARM_CATEGORY_HATE_SPEECH",
-#       threshold="OFF"
-#     ),types.SafetySetting(
-#       category="HARM_CATEGORY_DANGEROUS_CONTENT",
-#       threshold="OFF"
-#     ),types.SafetySetting(
-#       category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
-#       threshold="OFF"
-#     ),types.SafetySetting(
-#       category="HARM_CATEGORY_HARASSMENT",
-#       threshold="OFF"
-#     )],
-#     system_instruction=[types.Part.from_text(text=si_text1)],
-#   )
-
-#   full_response = ""
-#   for chunk in client.models.generate_content_stream(
-#       model="gemini-2.5-flash",
-#       contents=contents,
-#       config=generate_content_config,
-#   ):
-#     full_response += chunk.text
-
-#   return full_response
 
 
 # Fix asyncio loop issues (needed for Jupyter or nested loops)
