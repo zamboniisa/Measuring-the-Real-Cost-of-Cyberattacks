@@ -53,7 +53,6 @@ def download_csv(name, date, days_param, try_ = False):
     except Exception:
         raise ValueError(f"date must be 'Mon YYYY', got {date!r}")
 
-    # --- compute previous month/year and next month/year ---
     if month == 1:
         prev_month, prev_year = 12, year - 1
     else:
@@ -64,21 +63,17 @@ def download_csv(name, date, days_param, try_ = False):
     else:
         next_month, next_year = month + 1, year
 
-    # --- build window ---
-    # start at the 15th of the previous month
     period_start = datetime(prev_year, prev_month, 15, 0, 0)
     # end at the last day of the following month
     last_day     = calendar.monthrange(next_year, next_month)[1]
     period_end   = datetime(next_year, next_month, last_day, 0, 0)
 
-    # --- GDELT parameters & keyword list ---
     BASE_URL    = "https://api.gdeltproject.org/api/v2/doc/doc"
     FORMAT      = "CSV"
     MODE        = "artList"
     MAXRECORDS  = 250
 
-    # Tutti i termini relativi al cyber
-    keywords = [# Termini di base
+    keywords = [
                 "cyberattack", "keylogger", "cyber", "malicious", "malware", "cybercrime",
                 "phishing", "vishing", "backdoor", "hacktivist", "unpatched", "bug",
                 "firewall", "rootkit", "untrusted", "flaw", "vulnerability", "eavesdropping",
@@ -86,7 +81,6 @@ def download_csv(name, date, days_param, try_ = False):
                 "sanitization", "exploit", "disinformation", "malinformation",
                 "ransomware", "data breach", "data leakage",
 
-                # Tipi di attacco avanzati 
                 "DDos", "denial of service", "man-in-the-middle", "MITM",
                 "zero-day", "zero day", "SQL injection", "cross-site scripting", "XSS",
                 "privilege escalation", "credential stuffing", "password spraying",
@@ -95,22 +89,17 @@ def download_csv(name, date, days_param, try_ = False):
                 "pharming", "watering hole", "water holing",
                 "pass-the-hash", "spear phishing", "whaling", "smishing",
 
-                # Malware e payload
                 "trojan", "worm", "virus", "spyware", "adware", "cryptojacking",
                 "botnet", "botnets", "ransomworm",
 
-                # Infrastrutture e tattiche di rete
                 "command and control", "C2", "honeypot", "honeynet",
                 "pivoting", "lateral movement", "data exfiltration",
 
-                # Ingegneria sociale
                 "social engineering", 
 
-                # Difesa e monitoraggio
                 "exploit kit", "patch management", "incident response",
                 "SOC", "threat hunting", "SIEM",
 
-                # Altri concetti correlati
                 "deepfake", "credential harvesting", "skimming", "card skimming"]
 
     def chunks(lst, n):
@@ -157,10 +146,8 @@ def download_csv(name, date, days_param, try_ = False):
             try:
                 df = pd.read_csv(StringIO(resp.text))
                 tot_local = len(df)
-                # print(f'Number of articles found in this chunk {tot_local}')
                 tot += tot_local
             except:
-                # print(f'Number of articles found in this chunk 0')
                 continue
 
         print(f'Number of articles found in this date range: {tot}')
@@ -181,7 +168,6 @@ def download_csv(name, date, days_param, try_ = False):
         print(f"[{start_time:%Y-%m-%d}] querying {start_str} → {end_str}")
         all_batches = []
 
-        # query each small keyword chunk (to stay under 250 records)
         number_words = 2
         for group in tqdm(chunks(keywords, number_words)):
             count +=1
