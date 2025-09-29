@@ -150,8 +150,6 @@ def download_csv(name, date, days_param, try_ = False):
                 "enddatetime":   end_str
             }
 
-            # maybe sleep
-
             resp = requests.get(BASE_URL, params=params)
             if resp.status_code != 200 or not resp.text.strip():
                 print(f'Error Status {resp.status_code}')
@@ -204,7 +202,6 @@ def download_csv(name, date, days_param, try_ = False):
                 "enddatetime":   end_str
             }
 
-            # maybe sleep
             sleep(1)
 
             resp = requests.get(BASE_URL, params=params)
@@ -233,12 +230,9 @@ def download_csv(name, date, days_param, try_ = False):
 
             try:
                 df = pd.read_csv(StringIO(resp.text))
-                #print(f'Number of articles found in this chunk: {len(df)}')
                 all_batches.append(df)
             except Exception as e:
                 pass
-                #print(f'Number of articles found in this chuck: 0')
-                #print(f'Error: {e}')
             
         start_time = end_time
 
@@ -262,7 +256,6 @@ def download_csv(name, date, days_param, try_ = False):
 
 
 def generate(msg, prompt):
-    # Initialise Vertex AI
     vertexai.init(
         project="***",
         location="global"
@@ -277,11 +270,9 @@ def generate(msg, prompt):
         SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF"),
     ]
 
-    # Combine prompt with system instruction
     system_instruction = f"{prompt}"
     user_message = msg
 
-    # Generate content
     responses = model.generate_content(
         [system_instruction, user_message],
         safety_settings=safety_settings,
@@ -301,8 +292,6 @@ def generate(msg, prompt):
 
     return full_response
 
-
-# Fix asyncio loop issues (needed for Jupyter or nested loops)
 nest_asyncio.apply()
 
 # USER AGENT ROTATION
@@ -314,7 +303,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Mobile Safari/537.36"
 ]
 
-# FAST: BASIC EXTRACTION VIA REQUESTS
 def extract_with_requests(url):
     headers = {
         "User-Agent": random.choice(USER_AGENTS),
@@ -331,9 +319,8 @@ def extract_with_requests(url):
         text = soup.get_text(separator=' ', strip=True)
         return ' '.join(text.split())
     except Exception:
-        return None  # Trigger fallback
+        return None  
 
-# STRONG: ASYNC PLAYWRIGHT FALLBACK
 async def extract_with_browser_async(url):
     try:
         async with async_playwright() as p:
@@ -352,7 +339,6 @@ async def extract_with_browser_async(url):
     except Exception as e:
         return f"[Playwright Error] {e}"
 
-# WRAPPER FUNCTION TO CALL THE ABOVE
 def extract_article_text(url):
     text = extract_with_requests(url)
     if text:
@@ -393,7 +379,6 @@ def download_all(company, csv_name, n = 0, start = 0, skip = 0, devided = False)
         df = df.iloc[start: start+skip]
     text_void = []
 
-    # EXTRACT FOR EACH LINK (only first 250)
     for link in tqdm(df["URL"]):
         try:
             article = extract_article_text(link)
@@ -403,9 +388,7 @@ def download_all(company, csv_name, n = 0, start = 0, skip = 0, devided = False)
         except Exception as e:
             text_void.append(f"[Fatal Error] {e}")
 
-    # STORE website texts
     df["text_full"] = text_void
-    # Apply the function to each row and expand the dictionary into columns
     df_keywords = df["text_full"].apply(lambda s: keyword_occurrences(s, company)).apply(pd.Series)
     df = pd.concat([df, df_keywords], axis=1)
     download_path = f"{uploads_path}_extracted/{company}"
@@ -462,13 +445,10 @@ def prompt_2_call(list_text, company):
 
     msg = 'You are a cybersecurity analyst.'
     response = generate(msg, prompt)
-    # print('------ responses ------', response)
     response_cleaned = response.strip().replace("json","").replace("```", "").replace("python\n", "").strip()
     cyberattack_flags = ast.literal_eval(str(response_cleaned))
     return cyberattack_flags
 
-
-# Function to extract context snippet around the value
 def extract_context(text):
     value_pattern = r'(\$[\d,.]+|€[\d,.]+|£[\d,.]+|\b\d+(?:\.\d+)?\s?(?:million|billion|thousand|k|%)\b|\bUSD\s?\d+|\d+\s?(?:percent|%))'
     if pd.isna(text):
@@ -492,9 +472,6 @@ def prompt_1_call(list_text):
     msg = 'You are an expert in cybersecurity and economic value extraction.'
     response = generate(msg, prompt)
     print('------- response ---------',response)
-    # response_cleaned = response.strip().replace("json", "").replace("```", "").replace("python\n", "").strip()
-    # print(response_cleaned)
-    # response = ast.literal_eval(str(response_cleaned))
     response_cleaned = response.strip()
     print(response_cleaned)
     m = re.search(r"```json(.*?)```", response_cleaned, re.DOTALL)
@@ -503,34 +480,11 @@ def prompt_1_call(list_text):
     return response
 
 
-# def prompt_3_call(list_text, list_values, list_descriptions, numbered_sequence_of_economic_values, company = 'Apple'):
-#     with open("prompt_3.txt", "r") as file:
-#         prompt = file.read()
-
-#     prompt = prompt.replace('{company_name}', company)
-#     formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(list_text)])
-#     prompt = prompt.replace('{numbered_sequence_of_text_passages}', formatted_texts)
-#     formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(list_values)])
-#     prompt = prompt.replace('{numbered_sequence_of_economic_values}', str(numbered_sequence_of_economic_values))
-#     formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(list_descriptions)])
-#     prompt = prompt.replace('{numbered_sequence_of_descriptions_of_what_the_value_refer_to}', formatted_texts)
-
-#     msg = 'You are an expert in cybersecurity and economic value extraction.'
-#     response = generate(msg, prompt)
-#     response_cleaned = response.strip()
-#     print(response_cleaned)
-#     m = re.search(r"```json(.*?)```", response_cleaned, re.DOTALL)
-#     response = ast.literal_eval(m.group(1))
-
-#     return response
-
-
 def prompt_3_call(list_text, list_values, list_descriptions, numbered_sequence_of_economic_values, company="Apple"):
-    # Load template
+    
     with open("prompt_3.txt", "r") as file:
         prompt = file.read()
 
-    # Replace placeholders
     prompt = prompt.replace('{company_name}', company)
 
     formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(list_text)])
@@ -542,19 +496,15 @@ def prompt_3_call(list_text, list_values, list_descriptions, numbered_sequence_o
     formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(list_descriptions)])
     prompt = prompt.replace('{numbered_sequence_of_descriptions_of_what_the_value_refer_to}', formatted_texts)
 
-    # Message and model call
     msg = 'You are an expert in cybersecurity and economic value extraction.'
     response = generate(msg, prompt)
 
-    # Clean response
     response_cleaned = response.strip()
     print(response_cleaned)  # Debugging: see what the model outputs
 
-    # Extract fenced block (```json ... ```)
     m = re.search(r"```(?:json|python)?\s*(.*?)```", response_cleaned, re.DOTALL)
     payload = (m.group(1) if m else response_cleaned).strip()
 
-    # Try JSON first, fallback to Python literal
     try:
         response = json.loads(payload)
     except json.JSONDecodeError:
