@@ -117,7 +117,6 @@ def download_csv(name, date, days_param, try_ = False):
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
 
-    # --- slide a 1-day window across the 3-month period ---
     start_time = period_start
     tot = 0
 
@@ -294,7 +293,6 @@ def generate(msg, prompt):
 
 nest_asyncio.apply()
 
-# USER AGENT ROTATION
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15",
